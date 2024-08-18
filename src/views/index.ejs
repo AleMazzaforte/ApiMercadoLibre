@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Libre API</title>
+</head>
+<body>
+    <h1>Consulta de Transacción</h1>
+    <form id="transactionForm">
+        <label for="operationNumber">Número de Operación:</label>
+        <input type="text" id="operationNumber" name="operationNumber" required>
+        <button type="submit">Consultar</button>
+    </form>
+
+    <!-- Mostrar los detalles de la transacción aquí si están disponibles -->
+    <% if (transactionDetails) { %>
+        <h2>Detalles de la Transacción</h2>
+        <p><strong>Nombre del Cliente:</strong> <%= transactionDetails.customerName %></p>
+        <p><strong>ID del Cliente:</strong> <%= transactionDetails.customerId %></p>
+        <p><strong>Teléfono:</strong> <%= transactionDetails.phoneNumber %></p>
+        <h3>Productos Comprados:</h3>
+        <ul>
+            <% transactionDetails.products.forEach(product => { %>
+                <li><strong>SKU:</strong> <%= product.sku %>, <strong>Cantidad:</strong> <%= product.quantity %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <script>
+        document.getElementById('transactionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const operationNumber = document.getElementById('operationNumber').value;
+            if (operationNumber) {
+                window.location.href = `/transaction/${operationNumber}`;
+            }
+        });
+    </script>
+
+</body>
+</html>
