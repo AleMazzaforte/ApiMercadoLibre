@@ -23,16 +23,33 @@ module.exports = {
         }
     },
 
-    handleNotification: (req, res) => {
-        const notification = req.body; // La notificación se envía en el cuerpo de la solicitud
+    // Nueva función para obtener las categorías
+    getCategories: async (req, res) => {
+        const accessToken = req.session.accessToken;
 
-        // Aquí deberías validar la notificación y procesarla según sea necesario
-        console.log('Notificación recibida:', notification);
+        if (!accessToken) {
+            return res.status(401).send('No autorizado');
+        }
 
-        // Responde a Mercado Libre para confirmar que recibiste la notificación
-        res.status(200).send('Notificación recibida');
+        try {
+            // Realiza una solicitud a la API de Mercado Libre para obtener las categorías
+            const response = await axios.get('https://api.mercadolibre.com/sites/MLA/categories', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+
+            const categories = response.data;
+            
+            // Envía las categorías a la vista o como JSON
+            res.render('categories', { categories });  // Puedes crear una vista 'categories.ejs'
+        } catch (error) {
+            console.error('Error getting categories:', error);
+            res.status(500).send('Error obteniendo las categorías');
+        }
     },
 
+    // Función para obtener detalles de la transacción (ya existente)
     getTransactionDetails: async (req, res) => {
         const { operationNumber } = req.params;
         try {
@@ -41,17 +58,14 @@ module.exports = {
             if (!accessToken) {
                 return res.status(401).send('No autorizado');
             }
-            
-            // Realiza una solicitud a la API de Mercado Libre para obtener la transacción
+
             const response = await axios.get(`https://api.mercadolibre.com/orders/${operationNumber}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
-            
+
             const orderData = response.data;
-            
-            // Extrae la información necesaria
             const customerName = orderData.buyer.name;
             const customerId = orderData.buyer.dni;  // O usa `cuit` si está disponible
             const phoneNumber = orderData.buyer.phone.number;
@@ -60,7 +74,6 @@ module.exports = {
                 quantity: item.quantity
             }));
 
-            // Envía la respuesta
             res.json({
                 customerName,
                 customerId,
@@ -71,7 +84,16 @@ module.exports = {
             console.error('Error getting transaction details:', error);
             res.status(500).send('Error getting transaction details');
         }
+    },
+
+    handleNotification: (req, res) => {
+        const notification = req.body; // La notificación se envía en el cuerpo de la solicitud
+
+        // Aquí deberías validar la notificación y procesarla según sea necesario
+        console.log('Notificación recibida:', notification);
+
+        // Responde a Mercado Libre para confirmar que recibiste la notificación
+        res.status(200).send('Notificación recibida');
     }
 };
-
 
