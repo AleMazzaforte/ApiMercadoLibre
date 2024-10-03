@@ -3,7 +3,7 @@ const axios = require('axios');
 // Configuración de la API de Mercado Libre
 const clientId = '5687137389065913';  // Reemplaza con tu Client ID
 const clientSecret = 'MYva47J9LmxQZYvfM5QCugvq6tpwlZWf';  // Reemplaza con tu Client Secret
-const redirectUri = 'https://apimercadolibre-eight.vercel.app';  // Reemplaza con tu Redirect URI
+const redirectUri = 'https://apimercadolibre-eight.vercel.app/categories';  // Reemplaza con tu Redirect URI
 
 const apiUrl = 'https://api.mercadolibre.com';
 
